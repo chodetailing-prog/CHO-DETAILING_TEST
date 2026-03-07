@@ -42,6 +42,26 @@ export default function Layout() {
                 {link.name}
               </Link>
             ))}
+            <div className="flex items-center gap-4 ml-4 pl-8 border-l border-black/10">
+              <a 
+                href="https://www.instagram.com/cho.detailing/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-black/40 hover:text-black transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram size={18} />
+              </a>
+              <a 
+                href="#" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-black/40 hover:text-black transition-colors"
+                aria-label="YouTube"
+              >
+                <Youtube size={20} />
+              </a>
+            </div>
           </nav>
 
           {/* Mobile Menu Toggle */}
@@ -76,6 +96,24 @@ export default function Layout() {
                   {link.name}
                 </Link>
               ))}
+              <div className="flex items-center gap-8 mt-4 pt-8 border-t border-black/10">
+                <a 
+                  href="https://www.instagram.com/cho.detailing/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-black/40 hover:text-black transition-colors"
+                >
+                  <Instagram size={28} />
+                </a>
+                <a 
+                  href="#" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-black/40 hover:text-black transition-colors"
+                >
+                  <Youtube size={32} />
+                </a>
+              </div>
             </nav>
           </motion.div>
         )}
