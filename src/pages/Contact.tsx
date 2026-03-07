@@ -61,15 +61,15 @@ export default function Contact() {
             <div className="space-y-6 text-lg font-light text-black/70">
               <p className="flex items-center gap-4">
                 <MapPin size={24} className="text-black" />
-                서울특별시 강남구 도산대로 123, 1층 CHO DETAILING
+                
               </p>
               <p className="flex items-center gap-4">
                 <Phone size={24} className="text-black" />
-                02-1234-5678
+                
               </p>
               <p className="flex items-center gap-4">
                 <Mail size={24} className="text-black" />
-                info@chodetailing.com
+                chodetailing@gmail.com
               </p>
             </div>
           </div>
@@ -95,7 +95,7 @@ export default function Contact() {
           <div>
             <h2 className="text-2xl font-bold tracking-tight mb-8">SOCIAL</h2>
             <div className="flex gap-6">
-              <a href="#" className="w-12 h-12 rounded-full border border-black/20 flex items-center justify-center hover:bg-black hover:text-white transition-colors">
+              <a href="https://www.instagram.com/cho.detailing/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-black/20 flex items-center justify-center hover:bg-black hover:text-white transition-colors">
                 <Instagram size={24} />
               </a>
               <a href="#" className="w-12 h-12 rounded-full border border-black/20 flex items-center justify-center hover:bg-black hover:text-white transition-colors">

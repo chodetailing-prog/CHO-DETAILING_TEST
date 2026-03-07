@@ -1,14 +1,158 @@
-import { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
-import { Settings, Image as ImageIcon, FileText, Plus, Trash2, Edit3 } from "lucide-react";
+import { Settings, FileText, Plus, Trash2, Edit3, X, Upload, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PortfolioItem, getPortfolioItems, savePortfolioItems, fileToBase64 } from "@/lib/store";
 
 export default function Admin() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState(false);
+
   const [activeTab, setActiveTab] = useState("posts");
+  const [heroImage, setHeroImage] = useState("https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop");
+  const [isEditingHero, setIsEditingHero] = useState(false);
+  
+  const [posts, setPosts] = useState<PortfolioItem[]>([]);
+  const [isEditingPost, setIsEditingPost] = useState(false);
+  const [currentPost, setCurrentPost] = useState<Partial<PortfolioItem>>({});
+
+  const heroFileInputRef = useRef<HTMLInputElement>(null);
+  const postThumbnailInputRef = useRef<HTMLInputElement>(null);
+  const postGalleryInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const auth = localStorage.getItem("adminAuth");
+    if (auth === "true") {
+      setIsAuthenticated(true);
+    }
+    
+    const savedHero = localStorage.getItem("heroImage");
+    if (savedHero) setHeroImage(savedHero);
+
+    setPosts(getPortfolioItems());
+  }, []);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === "041018") {
+      localStorage.setItem("adminAuth", "true");
+      setIsAuthenticated(true);
+      setLoginError(false);
+    } else {
+      setLoginError(true);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("adminAuth");
+    setIsAuthenticated(false);
+  };
+
+  const handleHeroFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const base64 = await fileToBase64(file);
+      setHeroImage(base64);
+      localStorage.setItem("heroImage", base64);
+      setIsEditingHero(false);
+    }
+  };
+
+  const handlePostThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const base64 = await fileToBase64(file);
+      setCurrentPost({ ...currentPost, image: base64 });
+    }
+  };
+
+  const handlePostGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const newImages = [...(currentPost.images || [])];
+      for (let i = 0; i < files.length; i++) {
+        const base64 = await fileToBase64(files[i]);
+        newImages.push(base64);
+      }
+      setCurrentPost({ ...currentPost, images: newImages });
+    }
+  };
+
+  const removeGalleryImage = (index: number) => {
+    const newImages = [...(currentPost.images || [])];
+    newImages.splice(index, 1);
+    setCurrentPost({ ...currentPost, images: newImages });
+  };
+
+  const handleSavePost = () => {
+    if (!currentPost.title || !currentPost.image) {
+      alert("제목과 대표 이미지는 필수입니다.");
+      return;
+    }
+    
+    let updatedPosts;
+    if (currentPost.id) {
+      updatedPosts = posts.map(p => p.id === currentPost.id ? currentPost as PortfolioItem : p);
+    } else {
+      const newPost: PortfolioItem = {
+        id: Date.now().toString(),
+        title: currentPost.title || "",
+        category: currentPost.category || "",
+        image: currentPost.image || "",
+        images: currentPost.images || [currentPost.image || ""],
+        date: currentPost.date || new Date().toISOString().split('T')[0],
+        description: currentPost.description || ""
+      };
+      updatedPosts = [newPost, ...posts];
+    }
+    
+    setPosts(updatedPosts);
+    savePortfolioItems(updatedPosts);
+    setIsEditingPost(false);
+    setCurrentPost({});
+  };
+
+  const handleDeletePost = (id: string) => {
+    if (confirm("정말 이 포스트를 삭제하시겠습니까?")) {
+      const updatedPosts = posts.filter(p => p.id !== id);
+      setPosts(updatedPosts);
+      savePortfolioItems(updatedPosts);
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center px-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md bg-black/5 p-8 rounded-xl border border-black/10"
+        >
+          <h1 className="text-3xl font-bold tracking-tight mb-2 text-center">Admin Login</h1>
+          <p className="text-black/50 text-center mb-8">관리자 전용 페이지입니다.</p>
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <input 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="비밀번호를 입력하세요"
+                className="w-full bg-white border border-black/20 px-4 py-3 focus:outline-none focus:border-black transition-colors rounded-md text-center tracking-widest"
+              />
+              {loginError && <p className="text-red-500 text-sm mt-2 text-center">비밀번호가 일치하지 않습니다.</p>}
+            </div>
+            <button type="submit" className="w-full py-3 bg-black text-white font-medium tracking-widest uppercase hover:bg-black/80 transition-colors rounded-md">
+              Login
+            </button>
+          </form>
+        </motion.div>
+      </div>
+    );
+  }
 
   const tabs = [
     { id: "posts", label: "Post Management", icon: FileText },
-    { id: "media", label: "Media Library", icon: ImageIcon },
     { id: "settings", label: "Customization", icon: Settings },
   ];
 
@@ -18,14 +162,22 @@ export default function Admin() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="mb-16"
+        className="mb-16 flex justify-between items-end"
       >
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase mb-4">
-          Admin Dashboard
-        </h1>
-        <p className="text-black/50 font-light tracking-widest uppercase text-sm">
-          CHO DETAILING CMS
-        </p>
+        <div>
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tighter uppercase mb-4">
+            Admin Dashboard
+          </h1>
+          <p className="text-black/50 font-light tracking-widest uppercase text-sm">
+            CHO DETAILING CMS
+          </p>
+        </div>
+        <button 
+          onClick={handleLogout}
+          className="text-sm font-medium tracking-widest uppercase text-black/50 hover:text-black transition-colors"
+        >
+          Logout
+        </button>
       </motion.div>
 
       <div className="flex flex-col md:flex-row gap-12">
@@ -63,77 +215,172 @@ export default function Admin() {
             >
               <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold tracking-tight">Portfolio Posts</h2>
-                <button className="flex items-center gap-2 px-4 py-2 bg-black text-white text-sm font-medium tracking-widest uppercase hover:bg-black/80 transition-colors">
+                <button 
+                  onClick={() => {
+                    setCurrentPost({ images: [] });
+                    setIsEditingPost(true);
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-black text-white text-sm font-medium tracking-widest uppercase hover:bg-black/80 transition-colors rounded-md"
+                >
                   <Plus size={16} /> New Post
                 </button>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm border border-black/5 overflow-hidden">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="border-b border-black/10 text-xs font-medium tracking-widest uppercase text-black/50">
-                      <th className="p-4">Title</th>
-                      <th className="p-4">Category</th>
-                      <th className="p-4">Date</th>
-                      <th className="p-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { title: "Porsche 911 GT3", category: "Ceramic Coating", date: "2023-10-24" },
-                      { title: "Mercedes-Benz G-Class", category: "Interior Detailing", date: "2023-10-20" },
-                      { title: "BMW M4 Competition", category: "PPF", date: "2023-10-15" },
-                    ].map((post, idx) => (
-                      <tr key={idx} className="border-b border-black/5 hover:bg-black/5 transition-colors">
-                        <td className="p-4 font-medium">{post.title}</td>
-                        <td className="p-4 text-black/60 text-sm">{post.category}</td>
-                        <td className="p-4 text-black/60 text-sm">{post.date}</td>
-                        <td className="p-4 text-right">
-                          <button className="p-2 text-black/40 hover:text-black transition-colors inline-block">
-                            <Edit3 size={16} />
-                          </button>
-                          <button className="p-2 text-black/40 hover:text-red-500 transition-colors inline-block ml-2">
-                            <Trash2 size={16} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </motion.div>
-          )}
+              {isEditingPost ? (
+                <div className="bg-white p-6 rounded-lg shadow-sm border border-black/5 space-y-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold">{currentPost.id ? "Edit Post" : "New Post"}</h3>
+                    <button onClick={() => setIsEditingPost(false)} className="text-black/50 hover:text-black"><X size={20} /></button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium tracking-widest uppercase text-black/60">Title</label>
+                      <input 
+                        type="text" 
+                        value={currentPost.title || ""}
+                        onChange={(e) => setCurrentPost({...currentPost, title: e.target.value})}
+                        className="w-full bg-transparent border-b border-black/20 py-2 focus:outline-none focus:border-black transition-colors"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium tracking-widest uppercase text-black/60">Category</label>
+                      <input 
+                        type="text" 
+                        value={currentPost.category || ""}
+                        onChange={(e) => setCurrentPost({...currentPost, category: e.target.value})}
+                        className="w-full bg-transparent border-b border-black/20 py-2 focus:outline-none focus:border-black transition-colors"
+                      />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <label className="text-sm font-medium tracking-widest uppercase text-black/60">Description</label>
+                      <textarea 
+                        value={currentPost.description || ""}
+                        onChange={(e) => setCurrentPost({...currentPost, description: e.target.value})}
+                        rows={3}
+                        className="w-full bg-transparent border-b border-black/20 py-2 focus:outline-none focus:border-black transition-colors resize-none"
+                      />
+                    </div>
+                    
+                    {/* Thumbnail Upload */}
+                    <div className="space-y-4 md:col-span-2">
+                      <label className="text-sm font-medium tracking-widest uppercase text-black/60 block">Main Thumbnail</label>
+                      <div className="flex items-start gap-6">
+                        <div className="w-32 aspect-square bg-black/5 rounded-md overflow-hidden border border-black/10">
+                          {currentPost.image ? (
+                            <img src={currentPost.image} alt="Thumbnail" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-black/20">
+                              <ImageIcon size={32} />
+                            </div>
+                          )}
+                        </div>
+                        <button 
+                          onClick={() => postThumbnailInputRef.current?.click()}
+                          className="flex items-center gap-2 px-4 py-2 bg-black text-white text-xs font-medium tracking-widest uppercase hover:bg-black/80 transition-colors rounded-md"
+                        >
+                          <Upload size={14} /> Upload Thumbnail
+                        </button>
+                        <input 
+                          type="file" 
+                          ref={postThumbnailInputRef}
+                          onChange={handlePostThumbnailUpload}
+                          accept="image/*"
+                          className="hidden"
+                        />
+                      </div>
+                    </div>
 
-          {activeTab === "media" && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-8"
-            >
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold tracking-tight">Media Library</h2>
-                <button className="flex items-center gap-2 px-4 py-2 bg-black text-white text-sm font-medium tracking-widest uppercase hover:bg-black/80 transition-colors">
-                  <Plus size={16} /> Upload
-                </button>
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                  <div key={i} className="aspect-square bg-black/10 rounded-lg overflow-hidden relative group">
-                    <img 
-                      src={`https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=500&auto=format&fit=crop&sig=${i}`} 
-                      alt="Media" 
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <button className="p-2 text-white hover:text-red-400 transition-colors">
-                        <Trash2 size={20} />
-                      </button>
+                    {/* Gallery Upload */}
+                    <div className="space-y-4 md:col-span-2 pt-4 border-t border-black/5">
+                      <div className="flex justify-between items-center">
+                        <label className="text-sm font-medium tracking-widest uppercase text-black/60">Gallery Images</label>
+                        <button 
+                          onClick={() => postGalleryInputRef.current?.click()}
+                          className="flex items-center gap-2 px-4 py-2 bg-black/5 text-black text-xs font-medium tracking-widest uppercase hover:bg-black/10 transition-colors rounded-md"
+                        >
+                          <Plus size={14} /> Add Images
+                        </button>
+                        <input 
+                          type="file" 
+                          ref={postGalleryInputRef}
+                          onChange={handlePostGalleryUpload}
+                          multiple
+                          accept="image/*"
+                          className="hidden"
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                        {currentPost.images?.map((img, idx) => (
+                          <div key={idx} className="aspect-square bg-black/5 rounded-md overflow-hidden relative group border border-black/10">
+                            <img src={img} alt={`Gallery ${idx}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                            <button 
+                              onClick={() => removeGalleryImage(idx)}
+                              className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
+                  
+                  <div className="pt-8 flex gap-4 border-t border-black/5">
+                    <button onClick={handleSavePost} className="px-8 py-3 bg-black text-white font-medium tracking-widest uppercase hover:bg-black/80 transition-colors rounded-md">Save Post</button>
+                    <button onClick={() => setIsEditingPost(false)} className="px-8 py-3 bg-black/5 text-black font-medium tracking-widest uppercase hover:bg-black/10 transition-colors rounded-md">Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-white rounded-lg shadow-sm border border-black/5 overflow-hidden">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-black/10 text-xs font-medium tracking-widest uppercase text-black/50">
+                        <th className="p-4 w-16">Image</th>
+                        <th className="p-4">Title</th>
+                        <th className="p-4">Category</th>
+                        <th className="p-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {posts.map((post) => (
+                        <tr key={post.id} className="border-b border-black/5 hover:bg-black/5 transition-colors">
+                          <td className="p-4">
+                            <div className="w-12 h-12 bg-black/10 rounded overflow-hidden">
+                              <img src={post.image} alt={post.title} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                            </div>
+                          </td>
+                          <td className="p-4 font-medium">{post.title}</td>
+                          <td className="p-4 text-black/60 text-sm">{post.category}</td>
+                          <td className="p-4 text-right">
+                            <button 
+                              onClick={() => {
+                                setCurrentPost(post);
+                                setIsEditingPost(true);
+                              }}
+                              className="p-2 text-black/40 hover:text-black transition-colors inline-block"
+                            >
+                              <Edit3 size={16} />
+                            </button>
+                            <button 
+                              onClick={() => handleDeletePost(post.id)}
+                              className="p-2 text-black/40 hover:text-red-500 transition-colors inline-block ml-2"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {posts.length === 0 && (
+                        <tr>
+                          <td colSpan={4} className="p-8 text-center text-black/50">No posts found.</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -145,37 +392,71 @@ export default function Admin() {
             >
               <h2 className="text-2xl font-bold tracking-tight">Site Customization</h2>
               
-              <div className="bg-white p-8 rounded-lg shadow-sm border border-black/5 space-y-8">
-                <div className="space-y-4">
-                  <h3 className="text-sm font-medium tracking-widest uppercase text-black/60">Brand Name</h3>
-                  <input 
-                    type="text" 
-                    defaultValue="CHO DETAILING"
-                    className="w-full max-w-md bg-transparent border-b border-black/20 py-2 focus:outline-none focus:border-black transition-colors font-medium"
-                  />
-                </div>
+              <div className="bg-white p-8 rounded-lg shadow-sm border border-black/5 space-y-12">
+                {/* Hero Image Section */}
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-bold tracking-tight">Homepage Hero Image</h3>
+                    <button 
+                      onClick={() => heroFileInputRef.current?.click()}
+                      className="flex items-center gap-2 px-4 py-2 bg-black text-white text-sm font-medium tracking-widest uppercase hover:bg-black/80 transition-colors rounded-md"
+                    >
+                      <Upload size={16} /> Upload New Image
+                    </button>
+                    <input 
+                      type="file" 
+                      ref={heroFileInputRef}
+                      onChange={handleHeroFileUpload}
+                      accept="image/*"
+                      className="hidden"
+                    />
+                  </div>
 
-                <div className="space-y-4">
-                  <h3 className="text-sm font-medium tracking-widest uppercase text-black/60">Hero Subtitle</h3>
-                  <input 
-                    type="text" 
-                    defaultValue="하이엔드 자동차 디테일링의 새로운 기준"
-                    className="w-full max-w-md bg-transparent border-b border-black/20 py-2 focus:outline-none focus:border-black transition-colors font-medium"
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <h3 className="text-sm font-medium tracking-widest uppercase text-black/60">Theme Color (Accent)</h3>
-                  <div className="flex gap-4">
-                    <button className="w-10 h-10 rounded-full bg-black ring-2 ring-offset-2 ring-black"></button>
-                    <button className="w-10 h-10 rounded-full bg-zinc-800"></button>
-                    <button className="w-10 h-10 rounded-full bg-neutral-900"></button>
+                  <div className="aspect-[21/9] w-full bg-black/10 rounded-lg overflow-hidden relative border border-black/10">
+                    <img 
+                      src={heroImage} 
+                      alt="Current Hero" 
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                    />
                   </div>
                 </div>
 
-                <button className="px-8 py-3 bg-black text-white font-medium tracking-widest uppercase hover:bg-black/80 transition-colors mt-8">
-                  Save Changes
-                </button>
+                <hr className="border-black/10" />
+
+                <div className="space-y-8">
+                  <h3 className="text-lg font-bold tracking-tight">Text & Colors</h3>
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-medium tracking-widest uppercase text-black/60">Brand Name</h4>
+                    <input 
+                      type="text" 
+                      defaultValue="CHO DETAILING"
+                      className="w-full max-w-md bg-transparent border-b border-black/20 py-2 focus:outline-none focus:border-black transition-colors font-medium"
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-medium tracking-widest uppercase text-black/60">Hero Subtitle</h4>
+                    <input 
+                      type="text" 
+                      defaultValue="하이엔드 자동차 디테일링의 새로운 기준"
+                      className="w-full max-w-md bg-transparent border-b border-black/20 py-2 focus:outline-none focus:border-black transition-colors font-medium"
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="text-sm font-medium tracking-widest uppercase text-black/60">Theme Color (Accent)</h4>
+                    <div className="flex gap-4">
+                      <button className="w-10 h-10 rounded-full bg-black ring-2 ring-offset-2 ring-black"></button>
+                      <button className="w-10 h-10 rounded-full bg-zinc-800"></button>
+                      <button className="w-10 h-10 rounded-full bg-neutral-900"></button>
+                    </div>
+                  </div>
+
+                  <button className="px-8 py-3 bg-black text-white font-medium tracking-widest uppercase hover:bg-black/80 transition-colors mt-8">
+                    Save Text Changes
+                  </button>
+                </div>
               </div>
             </motion.div>
           )}

@@ -105,7 +105,7 @@ export default function Layout() {
           </div>
           
           <div className="flex items-center gap-6">
-            <a href="#" className="text-black/50 hover:text-black transition-colors">
+            <a href="https://www.instagram.com/cho.detailing/" target="_blank" rel="noopener noreferrer" className="text-black/50 hover:text-black transition-colors">
               <Instagram size={20} />
             </a>
             <a href="#" className="text-black/50 hover:text-black transition-colors">

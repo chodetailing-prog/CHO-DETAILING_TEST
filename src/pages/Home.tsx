@@ -1,15 +1,29 @@
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { PortfolioItem, getPortfolioItems } from "@/lib/store";
 
 export default function Home() {
+  const [heroImage, setHeroImage] = useState("https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop");
+  const [recentWorks, setRecentWorks] = useState<PortfolioItem[]>([]);
+
+  useEffect(() => {
+    const savedImage = localStorage.getItem("heroImage");
+    if (savedImage) {
+      setHeroImage(savedImage);
+    }
+    
+    setRecentWorks(getPortfolioItems().slice(0, 2));
+  }, []);
+
   return (
     <div className="flex flex-col w-full">
       {/* Hero Section */}
       <section className="relative h-[80vh] w-full flex items-center justify-center overflow-hidden bg-black">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop"
+            src={heroImage}
             alt="Luxury Car Detailing"
             className="w-full h-full object-cover opacity-60"
             referrerPolicy="no-referrer"
@@ -70,22 +84,11 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[
-              {
-                title: "Porsche 911 GT3",
-                desc: "Paint Correction & Ceramic Coating",
-                img: "https://images.unsplash.com/photo-1503376713259-8bbaf0118c58?q=80&w=2070&auto=format&fit=crop"
-              },
-              {
-                title: "Mercedes-Benz G-Class",
-                desc: "Premium Interior Detailing",
-                img: "https://images.unsplash.com/photo-1520031441872-265e4ff70366?q=80&w=1974&auto=format&fit=crop"
-              }
-            ].map((item, idx) => (
-              <Link to="/portfolio" key={idx} className="group block overflow-hidden">
+            {recentWorks.map((item) => (
+              <Link to="/portfolio" key={item.id} className="group block overflow-hidden">
                 <div className="aspect-[4/3] overflow-hidden bg-black/10">
                   <img
-                    src={item.img}
+                    src={item.image}
                     alt={item.title}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     referrerPolicy="no-referrer"
@@ -93,7 +96,7 @@ export default function Home() {
                 </div>
                 <div className="mt-6">
                   <h3 className="text-xl font-bold tracking-tight">{item.title}</h3>
-                  <p className="text-black/50 mt-2">{item.desc}</p>
+                  <p className="text-black/50 mt-2">{item.category}</p>
                 </div>
               </Link>
             ))}
