@@ -96,29 +96,29 @@ export default function Services() {
             <Link
               key={service.id}
               to={`/services/${service.id}`}
-              className="group relative h-[300px] md:h-[350px] lg:h-[400px] overflow-hidden rounded-2xl md:rounded-3xl block text-left shadow-lg hover:shadow-xl transition-all duration-500"
+              className="group relative h-[220px] md:h-[350px] lg:h-[400px] overflow-hidden rounded-2xl md:rounded-3xl block text-left shadow-lg hover:shadow-xl transition-all duration-500"
             >
               <div className="absolute inset-0 z-0">
                 <img
                   src={service.image}
                   alt={service.title}
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-[1100ms] ease-in-out group-hover:scale-110"
                   referrerPolicy="no-referrer"
                 />
                 {/* Base dark overlay */}
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500" />
+                <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors duration-500" />
                 
                 {/* Consistent Pastel Blue Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-sky-400/60 via-sky-200/10 to-transparent opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-500" />
               </div>
               
-              <div className="absolute inset-0 z-10 flex flex-col justify-end p-6 md:p-8 text-white">
-                <div className="relative z-20">
-                  <h3 className="text-xl md:text-2xl lg:text-4xl font-bold mb-2 md:mb-3 tracking-tight drop-shadow-md">
+              <div className="absolute inset-0 z-10 flex flex-col justify-end px-6 pb-6 md:px-8 md:pb-8 text-white">
+                <div className="relative z-20 transform transition-all duration-[1100ms] ease-in-out group-hover:-translate-y-2">
+                  <h3 className="text-xl md:text-2xl lg:text-4xl font-bold tracking-tight drop-shadow-lg">
                     {service.title}
                   </h3>
-                  <div className="overflow-hidden">
-                    <p className="text-xs md:text-sm lg:text-base text-white/90 font-light leading-relaxed transform translate-y-full group-hover:translate-y-0 group-active:translate-y-0 transition-transform duration-500 ease-out opacity-0 group-hover:opacity-100 group-active:opacity-100 max-w-lg">
+                  <div className="max-h-0 opacity-0 group-hover:max-h-16 group-hover:opacity-100 transition-all duration-[1100ms] ease-in-out overflow-hidden">
+                    <p className="text-xs md:text-sm lg:text-base text-white/90 font-light mt-3 leading-relaxed max-w-lg line-clamp-3">
                       {shortDescriptions[service.id] || service.description}
                     </p>
                   </div>

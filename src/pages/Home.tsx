@@ -35,6 +35,13 @@ export default function Home() {
   const [recentWorks, setRecentWorks] = useState<PortfolioItem[]>(fallbackRecentWorks);
   const [services, setServices] = useState<Service[]>(fallbackServices);
 
+  const shortDescriptions: Record<string, string> = {
+    "interior": "실내 정밀 세정 및 가죽 보호 케어",
+    "paint": "스크래치 제거 및 도장면 광택 최적화",
+    "ceramic": "최상급 세라믹 코팅 보호막 형성",
+    "signature": "전문적인 프리미엄 세차 서비스"
+  };
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -133,30 +140,30 @@ export default function Home() {
               <a 
                 key={service.id} 
                 href={`/services/${service.id}`}
-                className="group relative aspect-[4/5] md:aspect-[4/5] lg:aspect-[3/4] overflow-hidden rounded-2xl md:rounded-3xl block shadow-lg"
+                className="group relative aspect-[3/2] md:aspect-[4/5] lg:aspect-[3/4] overflow-hidden rounded-2xl md:rounded-3xl block shadow-lg"
               >
                 <div className="absolute inset-0 z-0">
                   <img
                     src={service.image}
                     alt={service.title}
-                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-[1100ms] ease-in-out group-hover:scale-110"
                     referrerPolicy="no-referrer"
                   />
                   {/* Base dark overlay */}
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-500" />
+                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/20 transition-colors duration-500" />
                   
                   {/* Consistent Pastel Blue Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-sky-400/60 via-sky-200/10 to-transparent opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-500" />
                 </div>
                 
-                <div className="absolute inset-0 z-10 flex flex-col justify-end p-6 md:p-8 text-white">
-                  <div className="relative z-20">
-                    <h3 className="text-xl md:text-2xl lg:text-3xl font-bold mb-1 md:mb-2 tracking-tight drop-shadow-md">
+                <div className="absolute inset-0 z-10 flex flex-col justify-end px-6 pb-6 md:px-8 md:pb-8 text-white">
+                  <div className="relative z-20 transform transition-all duration-[1100ms] ease-in-out group-hover:-translate-y-2">
+                    <h3 className="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight drop-shadow-lg">
                       {service.title}
                     </h3>
-                    <div className="overflow-hidden">
-                      <p className="text-xs md:text-sm lg:text-base text-white font-medium leading-snug transform translate-y-full group-hover:translate-y-0 group-active:translate-y-0 transition-transform duration-500 ease-out opacity-0 group-hover:opacity-100 group-active:opacity-100 line-clamp-2">
-                        {service.description}
+                    <div className="max-h-0 opacity-0 group-hover:max-h-16 group-hover:opacity-100 transition-all duration-[1100ms] ease-in-out overflow-hidden">
+                      <p className="text-xs md:text-sm lg:text-base text-white/90 font-light mt-3 leading-relaxed line-clamp-3">
+                        {shortDescriptions[service.id] || service.description}
                       </p>
                     </div>
                   </div>
