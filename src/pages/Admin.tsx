@@ -25,7 +25,7 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState("posts");
   const [siteConfig, setSiteConfig] = useState({
     heroImage: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop",
-    brandName: "CHO DETAILING",
+    brandName: "CAR CLEANING & DETAILING",
     heroSubtitle: "하이엔드 자동차 디테일링의 새로운 기준",
     aboutText: ""
   });
@@ -271,7 +271,7 @@ export default function Admin() {
             Admin Dashboard
           </h1>
           <p className="text-black/50 font-light tracking-widest uppercase text-sm">
-            CHO DETAILING CMS
+            ADMIN PANEL
           </p>
         </div>
         <button 

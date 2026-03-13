@@ -82,7 +82,7 @@ export default function Services() {
           <h1 className="text-5xl md:text-8xl font-bold tracking-tighter uppercase mb-8">
             Our Services
           </h1>
-          <p className="text-xl text-black/50 font-light max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-black/50 font-light max-w-2xl mx-auto leading-relaxed break-keep">
             차량의 가치를 보존하고 본연의 아름다움을 극대화하는 <br className="hidden md:block" />
             CHO DETAILING만의 하이엔드 케어 솔루션을 확인해 보세요.
           </p>
@@ -113,12 +113,12 @@ export default function Services() {
               </div>
               
               <div className="absolute inset-0 z-10 flex flex-col justify-end px-6 pb-6 md:px-8 md:pb-8 text-white">
-                <div className="relative z-20 transform transition-all duration-[1100ms] ease-in-out group-hover:-translate-y-2">
+                <div className="relative z-20 transform transition-all duration-[1100ms] ease-in-out group-hover:-translate-y-2 group-active:-translate-y-2">
                   <h3 className="text-xl md:text-2xl lg:text-4xl font-bold tracking-tight drop-shadow-lg">
                     {service.title}
                   </h3>
-                  <div className="max-h-0 opacity-0 group-hover:max-h-16 group-hover:opacity-100 transition-all duration-[1100ms] ease-in-out overflow-hidden">
-                    <p className="text-xs md:text-sm lg:text-base text-white/90 font-light mt-3 leading-relaxed max-w-lg line-clamp-3">
+                  <div className="max-h-0 opacity-0 group-hover:max-h-16 group-hover:opacity-100 group-active:max-h-16 group-active:opacity-100 transition-all duration-[1100ms] ease-in-out overflow-hidden">
+                    <p className="text-xs md:text-sm lg:text-base text-white/90 font-light mt-3 leading-relaxed max-w-lg line-clamp-3 break-keep">
                       {shortDescriptions[service.id] || service.description}
                     </p>
                   </div>

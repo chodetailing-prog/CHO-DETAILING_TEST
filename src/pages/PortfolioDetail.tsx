@@ -115,7 +115,7 @@ export default function PortfolioDetail() {
               {item.title}
             </h1>
             <div className="w-24 h-1.5 bg-black mb-10" />
-            <p className="text-xl text-black/60 font-light leading-relaxed max-w-xl">
+            <p className="text-xl text-black/60 font-light leading-relaxed max-w-xl break-keep">
               {item.description || "상세 설명이 없습니다."}
             </p>
           </div>

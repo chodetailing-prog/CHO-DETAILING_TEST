@@ -35,7 +35,7 @@ export default function Home() {
   const [services, setServices] = useState<Service[]>(fallbackServices);
   const [siteConfig, setSiteConfig] = useState<SiteConfig>({
     heroImage: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop",
-    brandName: "CHO DETAILING",
+    brandName: "CAR CLEANING & DETAILING",
     heroSubtitle: "하이엔드 자동차 디테일링의 새로운 기준"
   });
 
@@ -87,15 +87,25 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-5xl md:text-8xl font-bold tracking-tighter uppercase mb-6"
+            className="text-3xl md:text-6xl font-black tracking-tighter uppercase mb-6 leading-[0.9]"
           >
-            {siteConfig.brandName.split(' ')[0]} <br /> {siteConfig.brandName.split(' ').slice(1).join(' ')}
+            {siteConfig.brandName.includes('&') ? (
+              <>
+                {siteConfig.brandName.substring(0, siteConfig.brandName.lastIndexOf(' '))}<br />
+                {siteConfig.brandName.substring(siteConfig.brandName.lastIndexOf(' ') + 1)}
+              </>
+            ) : (
+              <>
+                {siteConfig.brandName.split(' ')[0]} <br /> 
+                {siteConfig.brandName.split(' ').slice(1).join(' ')}
+              </>
+            )}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="text-lg md:text-2xl font-light tracking-widest uppercase text-white/80 max-w-2xl mx-auto"
+            className="text-base md:text-xl font-light tracking-widest uppercase text-white/80 max-w-2xl mx-auto break-keep"
           >
             {siteConfig.heroSubtitle}
           </motion.p>
@@ -118,10 +128,10 @@ export default function Home() {
       {/* Philosophy Section */}
       <section className="py-32 px-6 bg-black/5">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-12">
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-12 break-keep">
             타협하지 않는 완벽함
           </h2>
-          <p className="text-lg md:text-xl text-black/60 font-light leading-relaxed">
+          <p className="text-lg md:text-xl text-black/60 font-light leading-relaxed break-keep">
             CHO DETAILING은 단순한 세차를 넘어, 차량 본연의 가치를 복원하고 극대화하는 하이엔드 디테일링 스튜디오입니다. 
             최고급 케미컬과 검증된 공정, 그리고 장인정신을 바탕으로 당신의 차량에 숨결을 불어넣습니다.
           </p>
@@ -132,8 +142,8 @@ export default function Home() {
       <section className="py-24 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tighter uppercase mb-4">CAR DETAILING SERVICES</h2>
-            <p className="text-black/50 max-w-2xl mx-auto font-light">
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tighter uppercase mb-4 break-keep">CAR DETAILING SERVICES</h2>
+            <p className="text-black/50 max-w-2xl mx-auto font-light break-keep">
               최상의 결과물을 위해 엄선된 제품과 정밀한 기술력을 결합합니다.<br />
               각 차량의 상태에 최적화된 맞춤형 디테일링 솔루션을 경험해 보세요.
             </p>
@@ -161,12 +171,12 @@ export default function Home() {
                 </div>
                 
                 <div className="absolute inset-0 z-10 flex flex-col justify-end px-6 pb-6 md:px-8 md:pb-8 text-white">
-                  <div className="relative z-20 transform transition-all duration-[1100ms] ease-in-out group-hover:-translate-y-2">
+                  <div className="relative z-20 transform transition-all duration-[1100ms] ease-in-out group-hover:-translate-y-2 group-active:-translate-y-2">
                     <h3 className="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight drop-shadow-lg">
                       {service.title}
                     </h3>
-                    <div className="max-h-0 opacity-0 group-hover:max-h-16 group-hover:opacity-100 transition-all duration-[1100ms] ease-in-out overflow-hidden">
-                      <p className="text-xs md:text-sm lg:text-base text-white/90 font-light mt-3 leading-relaxed line-clamp-3">
+                    <div className="max-h-0 opacity-0 group-hover:max-h-16 group-hover:opacity-100 group-active:max-h-16 group-active:opacity-100 transition-all duration-[1100ms] ease-in-out overflow-hidden">
+                      <p className="text-xs md:text-sm lg:text-base text-white/90 font-light mt-3 leading-relaxed line-clamp-3 break-keep">
                         {shortDescriptions[service.id] || service.description}
                       </p>
                     </div>

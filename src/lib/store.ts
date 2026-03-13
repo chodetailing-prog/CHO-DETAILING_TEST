@@ -235,7 +235,7 @@ export async function getSiteConfig(): Promise<SiteConfig> {
       const data = snapshot.data();
       return {
         heroImage: data.heroImage || "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop",
-        brandName: data.brandName || "CHO DETAILING",
+        brandName: data.brandName || "CAR CLEANING & DETAILING",
         heroSubtitle: data.heroSubtitle || "하이엔드 자동차 디테일링의 새로운 기준",
         aboutText: data.aboutText || ""
       };
@@ -245,7 +245,7 @@ export async function getSiteConfig(): Promise<SiteConfig> {
   }
   return {
     heroImage: "https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?q=80&w=2069&auto=format&fit=crop",
-    brandName: "CHO DETAILING",
+    brandName: "CAR CLEANING & DETAILING",
     heroSubtitle: "하이엔드 자동차 디테일링의 새로운 기준",
     aboutText: ""
   };

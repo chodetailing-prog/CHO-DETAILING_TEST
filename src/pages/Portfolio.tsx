@@ -60,7 +60,7 @@ export default function Portfolio() {
         <h1 className="text-5xl md:text-7xl font-bold tracking-tighter uppercase mb-6">
           Portfolio
         </h1>
-        <p className="text-xl text-black/50 font-light max-w-2xl">
+        <p className="text-xl text-black/50 font-light max-w-2xl break-keep">
           CHO DETAILING이 완성한 완벽함의 기록. 각 차량의 특성을 고려한 맞춤형 디테일링 솔루션을 제공합니다.
         </p>
       </motion.div>
