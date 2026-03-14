@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { motion } from "motion/react";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 import { getServiceById, Service } from "@/lib/store";
+import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
 
 export default function ServiceDetail() {
   const { id } = useParams<{ id: string }>();
@@ -51,6 +52,16 @@ export default function ServiceDetail() {
             "오염도에 따라 가격 변동 가능"
           ]
         }
+      ],
+      comparisonImages: [
+        {
+          before: "https://images.unsplash.com/photo-1599256621730-535171e28e50?q=80&w=2071&auto=format&fit=crop",
+          after: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2000&auto=format&fit=crop"
+        },
+        {
+          before: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=2070&auto=format&fit=crop",
+          after: "https://images.unsplash.com/photo-1520031441872-265e4ff70366?q=80&w=2070&auto=format&fit=crop"
+        }
       ]
     },
     "paint": {
@@ -90,6 +101,20 @@ export default function ServiceDetail() {
             "RV + 10만원",
             "대형 차량은 별도 문의"
           ] 
+        }
+      ],
+      featureSections: [
+        {
+          title: "카나우바 왁스 또는 세라믹 코팅",
+          description: "모든 광택 작업 후에는 도장면을 보호하기 위해 고품질 왁스로 마무리합니다. 차량 광택 작업 후 코팅으로 보호하고 싶으시다면 세라믹 코팅 시공을 살펴보세요. 세라믹 코팅은 광택 작업이 포함된 패키지 상품으로 제공됩니다.",
+          image: "https://images.unsplash.com/photo-1605515298946-d062f2e9da53?q=80&w=2000&auto=format&fit=crop",
+          buttonText: "세라믹 코팅 알아보기"
+        },
+        {
+          title: "헤드라이트 광택",
+          description: "샌딩 및 폴리싱 기술을 사용하면 흐릿해진 헤드라이트를 원래의 선명함으로 되돌릴 수 있습니다. 헤드라이트 폴리싱은 차량의 전조등이 불분명하여 기술 검사를 통과하지 못한 경우에도 적합한 방법입니다.",
+          image: "https://images.unsplash.com/photo-1626961527443-432549293673?q=80&w=2000&auto=format&fit=crop",
+          price: "헤드라이트 개당 ₩40,000부터"
         }
       ]
     },
@@ -324,34 +349,101 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* Before / After Section */}
-      <section className="w-full py-16 md:py-24 lg:py-32 px-4 sm:px-6 md:px-8">
-        <div className="max-w-5xl mx-auto text-center space-y-8 md:space-y-12">
-          <div className="space-y-3 md:space-y-4">
-            <h2 className="text-xs md:text-sm font-bold tracking-[0.4em] uppercase text-black/30">Results</h2>
-            <h3 className="text-3xl md:text-5xl font-bold tracking-tight">
-              Before / After 결과
-            </h3>
-          </div>
-          <p className="text-lg md:text-xl text-black/50 font-light leading-relaxed max-w-2xl mx-auto break-keep">
-            최고급 케미컬과 정밀한 공정을 통해 차량이 어떻게 변화하는지 직접 확인해 보세요. 
-            타협하지 않는 완벽함이 결과로 증명됩니다.
-          </p>
-          <div className="aspect-video bg-black/5 rounded-2xl md:rounded-[2rem] flex items-center justify-center overflow-hidden relative group shadow-xl">
-             <img
-                src={service.image}
-                alt="After Result"
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/20 transition-colors">
-                 <span className="px-6 md:px-10 py-3 md:py-4 bg-white text-black text-xs md:text-sm font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase rounded-full shadow-2xl">
-                   After Result
-                 </span>
+      {/* Feature Sections (Split Layout) */}
+      {service.featureSections && service.featureSections.length > 0 && (
+        <section className="w-full overflow-hidden border-t border-black/5">
+          {service.featureSections.map((section, index) => (
+            <div 
+              key={index} 
+              className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center`}
+            >
+              {/* Image Side */}
+              <div className="w-full lg:w-1/2 aspect-video lg:aspect-square overflow-hidden relative bg-white">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 0.3 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.5 }}
+                  className="w-full h-full"
+                >
+                  <img 
+                    src={section.image} 
+                    alt={section.title}
+                    className="w-full h-full object-cover grayscale-[0.2] brightness-110"
+                    referrerPolicy="no-referrer"
+                  />
+                </motion.div>
+                {/* Gradient masks to fade the image into the background */}
+                <div className={`absolute inset-0 bg-gradient-to-b from-white via-transparent to-white lg:bg-gradient-to-r ${index % 2 === 0 ? 'lg:from-transparent lg:to-white' : 'lg:from-white lg:to-transparent'} pointer-events-none`} />
               </div>
+              
+              {/* Text Side */}
+              <div className="w-full lg:w-1/2 p-8 sm:p-12 md:p-16 lg:p-24 xl:p-32 space-y-6 md:space-y-8">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className="space-y-4 md:space-y-6"
+                >
+                  <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-black leading-tight break-keep">
+                    {section.title}
+                  </h3>
+                  <p className="text-base md:text-lg text-black/60 leading-relaxed font-light break-keep">
+                    {section.description}
+                  </p>
+                  
+                  {section.price && (
+                    <p className="text-xl md:text-2xl font-bold text-black pt-4">
+                      {section.price}
+                    </p>
+                  )}
+                  
+                  {section.buttonText && (
+                    <div className="pt-6">
+                      <a 
+                        href="/services/ceramic" 
+                        className="inline-flex items-center gap-2 px-8 py-4 bg-black text-white text-xs font-bold tracking-[0.2em] uppercase rounded-full hover:bg-black/80 transition-all group"
+                      >
+                        {section.buttonText}
+                        <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                      </a>
+                    </div>
+                  )}
+                </motion.div>
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {/* Before / After Section */}
+      {service.comparisonImages && service.comparisonImages.length > 0 && (
+        <section className="w-full py-16 md:py-24 lg:py-32 px-4 sm:px-6 md:px-8 border-t border-black/5">
+          <div className="max-w-7xl mx-auto space-y-12 md:space-y-20">
+            <div className="text-center space-y-3 md:space-y-4">
+              <h2 className="text-xs md:text-sm font-bold tracking-[0.4em] uppercase text-black/30">Results</h2>
+              <h3 className="text-3xl md:text-5xl font-bold tracking-tighter uppercase text-black">
+                전/후 결과
+              </h3>
+              <p className="text-sm md:text-base text-black/40 font-light max-w-xl mx-auto break-keep">
+                파란색 선을 드래그하여 결과를 확인하세요.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+              {service.comparisonImages.map((pair, index) => (
+                <div key={index} className="space-y-4">
+                  <BeforeAfterSlider 
+                    beforeImage={pair.before}
+                    afterImage={pair.after}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

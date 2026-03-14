@@ -89,6 +89,14 @@ export interface PricingPlan {
   categories?: PricingCategory[];
 }
 
+export interface FeatureSection {
+  title: string;
+  description: string;
+  image: string;
+  buttonText?: string;
+  price?: string;
+}
+
 export interface Service {
   id: string;
   title: string;
@@ -99,6 +107,11 @@ export interface Service {
   order: number;
   admin_key?: string;
   pricing?: PricingPlan[];
+  comparisonImages?: {
+    before: string;
+    after: string;
+  }[];
+  featureSections?: FeatureSection[];
 }
 
 export interface SiteConfig {
@@ -355,6 +368,16 @@ export async function seedPortfolioItems() {
                 "오염도에 따라 가격 변동 가능"
               ]
             }
+          ],
+          comparisonImages: [
+            {
+              before: "https://images.unsplash.com/photo-1599256621730-535171e28e50?q=80&w=2071&auto=format&fit=crop",
+              after: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=2000&auto=format&fit=crop"
+            },
+            {
+              before: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=2070&auto=format&fit=crop",
+              after: "https://images.unsplash.com/photo-1520031441872-265e4ff70366?q=80&w=2070&auto=format&fit=crop"
+            }
           ]
         },
         {
@@ -394,6 +417,26 @@ export async function seedPortfolioItems() {
                 "RV + 10만원",
                 "대형 차량은 별도 문의"
               ] 
+            }
+          ],
+          comparisonImages: [
+            {
+              before: "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?q=80&w=2070&auto=format&fit=crop",
+              after: "https://images.unsplash.com/photo-1555215695-3004980ad54e?q=80&w=2070&auto=format&fit=crop"
+            }
+          ],
+          featureSections: [
+            {
+              title: "카나우바 왁스 또는 세라믹 코팅",
+              description: "모든 광택 작업 후에는 도장면을 보호하기 위해 고품질 왁스로 마무리합니다. 차량 광택 작업 후 코팅으로 보호하고 싶으시다면 세라믹 코팅 시공을 살펴보세요. 세라믹 코팅은 광택 작업이 포함된 패키지 상품으로 제공됩니다.",
+              image: "https://images.unsplash.com/photo-1605515298946-d062f2e9da53?q=80&w=2000&auto=format&fit=crop",
+              buttonText: "세라믹 코팅 알아보기"
+            },
+            {
+              title: "헤드라이트 광택",
+              description: "샌딩 및 폴리싱 기술을 사용하면 흐릿해진 헤드라이트를 원래의 선명함으로 되돌릴 수 있습니다. 헤드라이트 폴리싱은 차량의 전조등이 불분명하여 기술 검사를 통과하지 못한 경우에도 적합한 방법입니다.",
+              image: "https://images.unsplash.com/photo-1626961527443-432549293673?q=80&w=2000&auto=format&fit=crop",
+              price: "헤드라이트 개당 ₩40,000부터"
             }
           ]
         },
