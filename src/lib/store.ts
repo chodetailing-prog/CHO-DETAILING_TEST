@@ -427,7 +427,7 @@ export async function seedPortfolioItems() {
           ],
           featureSections: [
             {
-              title: "카나우바 왁스 또는 세라믹 코팅",
+              title: "카나우바 왁스 또는\n세라믹 코팅",
               description: "모든 광택 작업 후에는 도장면을 보호하기 위해 고품질 왁스로 마무리합니다. 차량 광택 작업 후 코팅으로 보호하고 싶으시다면 세라믹 코팅 시공을 살펴보세요. 세라믹 코팅은 광택 작업이 포함된 패키지 상품으로 제공됩니다.",
               image: "https://images.unsplash.com/photo-1605515298946-d062f2e9da53?q=80&w=2000&auto=format&fit=crop",
               buttonText: "세라믹 코팅 알아보기"

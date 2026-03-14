@@ -105,7 +105,7 @@ export default function ServiceDetail() {
       ],
       featureSections: [
         {
-          title: "카나우바 왁스 또는 세라믹 코팅",
+          title: "카나우바 왁스 또는\n세라믹 코팅",
           description: "모든 광택 작업 후에는 도장면을 보호하기 위해 고품질 왁스로 마무리합니다. 차량 광택 작업 후 코팅으로 보호하고 싶으시다면 세라믹 코팅 시공을 살펴보세요. 세라믹 코팅은 광택 작업이 포함된 패키지 상품으로 제공됩니다.",
           image: "https://images.unsplash.com/photo-1605515298946-d062f2e9da53?q=80&w=2000&auto=format&fit=crop",
           buttonText: "세라믹 코팅 알아보기"
@@ -349,16 +349,16 @@ export default function ServiceDetail() {
         </section>
       )}
 
-      {/* Feature Sections (Split Layout) */}
+      {/* Feature Sections (Split Layout / Mobile Overlay) */}
       {service.featureSections && service.featureSections.length > 0 && (
         <section className="w-full overflow-hidden border-t border-black/5">
           {service.featureSections.map((section, index) => (
             <div 
               key={index} 
-              className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center`}
+              className={`relative flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center min-h-[400px] sm:min-h-[500px] lg:min-h-0`}
             >
-              {/* Image Side */}
-              <div className="w-full lg:w-1/2 aspect-video lg:aspect-square overflow-hidden relative bg-white">
+              {/* Image Side - Background on mobile (half width), Side on desktop */}
+              <div className={`absolute inset-y-0 ${index % 2 === 0 ? 'left-0' : 'right-0'} w-1/2 lg:relative lg:inset-auto lg:w-1/2 overflow-hidden bg-white`}>
                 <motion.div
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 0.3 }}
@@ -374,11 +374,12 @@ export default function ServiceDetail() {
                   />
                 </motion.div>
                 {/* Gradient masks to fade the image into the background */}
-                <div className={`absolute inset-0 bg-gradient-to-b from-white via-transparent to-white lg:bg-gradient-to-r ${index % 2 === 0 ? 'lg:from-transparent lg:to-white' : 'lg:from-white lg:to-transparent'} pointer-events-none`} />
+                <div className={`absolute inset-0 bg-gradient-to-b from-white via-transparent to-white lg:hidden pointer-events-none`} />
+                <div className={`absolute inset-0 bg-gradient-to-r ${index % 2 === 0 ? 'from-transparent to-white' : 'from-white to-transparent'} pointer-events-none`} />
               </div>
               
               {/* Text Side */}
-              <div className="w-full lg:w-1/2 p-8 sm:p-12 md:p-16 lg:p-24 xl:p-32 space-y-6 md:space-y-8">
+              <div className="relative z-10 w-full lg:w-1/2 p-8 sm:p-12 md:p-16 lg:p-24 xl:p-32 space-y-6 md:space-y-8">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -386,8 +387,13 @@ export default function ServiceDetail() {
                   transition={{ duration: 0.8, delay: 0.2 }}
                   className="space-y-4 md:space-y-6"
                 >
-                  <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-black leading-tight break-keep">
-                    {section.title}
+                  <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-black leading-tight break-keep">
+                    {section.title.split('\n').map((line, i, arr) => (
+                      <span key={i}>
+                        {line}
+                        {i < arr.length - 1 && <br />}
+                      </span>
+                    ))}
                   </h3>
                   <p className="text-base md:text-lg text-black/60 leading-relaxed font-light break-keep">
                     {section.description}
